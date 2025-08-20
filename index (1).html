@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>【緊急警告】データ漏洩検出</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+    html, body {
+      margin: 0; padding: 0;
+      width: 100vw; height: 100vh;
+      background: #000;
+      overflow: hidden;
+      font-family: 'Share Tech Mono', monospace;
+      color: #f00;
+      user-select: none;
+      box-sizing: border-box;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0; /* パディング削除 */
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 10px #ff0000, 0 0 20px #ff3333;
+      animation: flickerRed 2s infinite alternate;
+    }
+    p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      line-height: 1.5;
+      text-shadow: 0 0 8px #900;
+    }
+    #data-transfer {
+      margin-top: 1.5rem;
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #ff4444;
+      text-shadow: 0 0 8px #ff4444;
+    }
+    #progress-bar-container {
+      margin-top: 0.8rem;
+      width: 90vw;         /* 画面幅の90% */
+      max-width: 600px;
+      height: 18px;
+      background: #220000;
+      border: 2px solid #ff0000;
+      box-shadow: 0 0 12px #ff0000 inset;
+      box-sizing: border-box;
+      margin-left: auto;
+      margin-right: auto;  /* 中央寄せ */
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff0000, #ff5555);
+      transition: width 0.15s ease-out;
+    }
+
+    /* 点滅背景 */
+    @keyframes flashRed {
+      0%, 100% { background-color: #000; }
+      50% { background-color: #400000; }
+    }
+    .flash-red {
+      animation: flashRed 1.5s infinite;
+    }
+
+    @keyframes flickerRed {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .alert-popup {
+      position: fixed;
+      background-color: #200000;
+      border: 3px solid #ff0000;
+      box-shadow: 0 0 15px #ff0000;
+      color: #fff;
+      font-weight: bold;
+      padding: 1rem 1.5rem;
+      font-size: 1rem;
+      width: 280px;
+      z-index: 10000;
+      user-select: none;
+      opacity: 0;
+      animation: popupFadeIn 0.4s forwards;
+      border-radius: 0;
+      text-align: center;
+    }
+
+    @keyframes popupFadeIn {
+      to { opacity: 1; }
+    }
+
+    .alert-popup strong {
+      color: #ff5555;
+      text-shadow: 0 0 8px #ff0000;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>⚠️ 緊急警告 ⚠️</h1>
+  <p>
+    あなたのシステムはウイルスに感染しています。<br />
+    個人情報・ファイルが外部に送信されています。<br />
+    直ちにこの操作を中止し、支援を求めてください。
+  </p>
+
+  <div id="data-transfer">データ送信中… 0%</div>
+  <div id="progress-bar-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <script>
+    const popupMessages = [
+      "不正なプロセス検出。",
+      "メモリ領域に異常あり。",
+      "ネットワーク接続が切断されました。",
+      "ファイルが暗号化されています。",
+      "セキュリティ侵害を監視中。",
+      "パスワードが盗まれています。",
+      "データの送信が継続中。",
+      "感染拡大を防止しています。",
+    ];
+
+    const body = document.body;
+    const dataTransferText = document.getElementById('data-transfer');
+    const progressBar = document.getElementById('progress-bar');
+
+    body.classList.add('flash-red');
+
+    function randomBetween(min, max) {
+      return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    function createPopup() {
+      const popupWidth = 280;
+      const popup = document.createElement('div');
+      popup.classList.add('alert-popup');
+      popup.innerHTML = `<strong>警告!</strong><br>${popupMessages[Math.floor(Math.random() * popupMessages.length)]}`;
+
+      const x = randomBetween(10, window.innerWidth - popupWidth - 10);
+      const y = randomBetween(10, window.innerHeight - 100);
+      popup.style.left = `${x}px`;
+      popup.style.top = `${y}px`;
+
+      document.body.appendChild(popup);
+
+      setTimeout(() => {
+        popup.style.transition = 'opacity 0.5s';
+        popup.style.opacity = '0';
+        setTimeout(() => popup.remove(), 500);
+      }, randomBetween(2000, 4000));
+    }
+
+    // ポップ表示
+    let popupCount = 0;
+    const maxPopups = 6;
+    const popupInterval = setInterval(() => {
+      if(popupCount < maxPopups) {
+        createPopup();
+        popupCount++;
+      } else {
+        clearInterval(popupInterval);
+      }
+    }, 700);
+
+    // データ送信進行
+    let progressPercent = 0;
+    const progressInterval = setInterval(() => {
+      progressPercent += Math.random() * 3;
+      if(progressPercent >= 100) {
+        progressPercent = 100;
+        clearInterval(progressInterval);
+        dataTransferText.textContent = "データ送信完了。";
+        progressBar.style.width = `100%`;
+        // ⬇ 自動遷移（1.5秒後）
+        setTimeout(() => {
+          window.location.href = 'typewriter.html';
+        }, 1500);
+      } else {
+        dataTransferText.textContent = `データ送信中… ${Math.floor(progressPercent)}%`;
+        progressBar.style.width = `${progressPercent}%`;
+      }
+    }, 150);
+  </script>
+</body>
+</html>

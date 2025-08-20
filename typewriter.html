@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>⚠ 警告：不正アクセス検出</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    body {
+      background: linear-gradient(135deg, #1a0000, #300000);
+      color: #ff3b3b;
+      font-family: 'Share Tech Mono', monospace;
+      margin: 0; padding: 2.4rem 1.2rem;
+      max-width: 720px;
+      line-height: 1.9;
+      letter-spacing: 0.1em;
+      user-select: none;
+      text-align: left;
+      text-shadow:
+        0 0 6px #ff3b3baa,
+        0 0 12px #ff1a1a88;
+    }
+
+    h1 {
+      font-size: 3.6rem;
+      color: #ff1a1a;
+      text-align: center;
+      margin-bottom: 2rem;
+      text-shadow:
+        0 0 10px #ff1a1a,
+        0 0 20px #ff1a1aee,
+        0 0 30px #ff5555ff;
+      animation: pulseAlert 1.8s ease-in-out infinite alternate;
+      user-select: text;
+    }
+
+    #datetime, #location {
+      font-size: 1.35rem;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1.5px solid #ff4444;
+      text-shadow: 0 0 12px #ff2222cc;
+      white-space: pre-line;
+      user-select: text;
+    }
+
+    #text-area {
+      margin: 2.2rem 0;
+      font-size: 1.3rem;
+      color: #ff5555dd;
+      text-shadow: 0 0 9px #cc2222bb;
+      white-space: pre-line;
+      user-select: text;
+    }
+
+    #warning-popup {
+      background-color: #440000;
+      border: 4px solid #ff2222;
+      padding: 2rem 1.8rem;
+      font-size: 1.5rem;
+      color: #ff1111;
+      text-align: center;
+      box-shadow:
+        0 0 40px #ff0000cc,
+        inset 0 0 20px #ff4444aa;
+      opacity: 0;
+      transform: scale(0.92);
+      transition: opacity 1.2s ease, transform 1.2s ease;
+      margin-top: 3rem;
+      font-weight: 900;
+      user-select: text;
+      letter-spacing: 0.14em;
+      user-select: text;
+      filter: drop-shadow(0 0 8px #ff2222aa);
+    }
+    #warning-popup.visible {
+      opacity: 1;
+      transform: scale(1);
+      animation: pulseGlow 2.8s ease-in-out infinite alternate;
+    }
+
+    #next-page-btn {
+      display: none;
+      margin: 3.5rem auto 0 auto;
+      padding: 1.1rem 3rem;
+      background: linear-gradient(90deg, #ff2222, #cc0000);
+      border: none;
+      border-radius: 35px;
+      color: #fff;
+      font-weight: 900;
+      font-size: 1.4rem;
+      cursor: pointer;
+      box-shadow:
+        0 0 35px #ff4444cc,
+        0 0 60px #ff2222aa inset;
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+      user-select: text;
+      max-width: 320px;
+      width: 100%;
+      text-align: center;
+      filter: drop-shadow(0 0 10px #ff5555cc);
+    }
+    #next-page-btn:hover {
+      background: linear-gradient(90deg, #ff5555, #dd1111);
+      box-shadow:
+        0 0 55px #ff6666dd,
+        0 0 80px #ff4444cc inset;
+      transform: scale(1.07);
+    }
+
+    @keyframes pulseAlert {
+      0% { text-shadow: 0 0 14px #ff0000cc, 0 0 28px #ff2222ee; }
+      100% { text-shadow: 0 0 28px #ff5555ff, 0 0 44px #ff6666ff; }
+    }
+
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 40px #ff0000cc, inset 0 0 20px #ff4444aa; }
+      100% { box-shadow: 0 0 70px #ff2222ee, inset 0 0 36px #ff6666cc; }
+    }
+
+    @media screen and (max-width: 480px) {
+      body {
+        padding: 1.8rem 1rem;
+        line-height: 1.7;
+        letter-spacing: 0.06em;
+      }
+      h1 {
+        font-size: 2.8rem;
+      }
+      #datetime, #location {
+        font-size: 1.15rem;
+      }
+      #text-area {
+        font-size: 1.15rem;
+      }
+      #warning-popup {
+        font-size: 1.25rem;
+        padding: 1.3rem 1.2rem;
+        margin-top: 2rem;
+      }
+      #next-page-btn {
+        font-size: 1.2rem;
+        padding: 1rem 2.3rem;
+        max-width: 100%;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>⚠ 警告：不正アクセス検出</h1>
+  <div id="datetime"></div>
+  <div id="location"></div>
+  <div id="text-area"></div>
+  <div id="warning-popup">INFECTED-ID 017: 不正コード検出中…</div>
+  <button id="next-page-btn">→ 作品説明ページへ</button>
+
+  <script>
+    const datetimeEl = document.getElementById('datetime');
+    const locationEl = document.getElementById('location');
+    const textArea = document.getElementById('text-area');
+    const warningPopup = document.getElementById('warning-popup');
+    const nextBtn = document.getElementById('next-page-btn');
+
+    const message = `あなたはこのQRコードを読み込みました。
+その“興味”が、危険を呼び寄せています。
+
+スマホからデータが抜き取られています。
+あなたの行動はすでに記録され、監視されています。
+
+この瞬間から、あなたは“標的”です。
+止めることはもうできません。`;
+
+    const warningText = `INFECTED-ID 017: 不正コード検出中…`;
+
+    function typeWriter(el, text, speed = 60) {
+      return new Promise(resolve => {
+        el.textContent = '';
+        let i = 0;
+        const timer = setInterval(() => {
+          el.textContent += text.charAt(i++);
+          if (i >= text.length) {
+            clearInterval(timer);
+            resolve();
+          }
+        }, speed);
+      });
+    }
+
+    async function fetchLocationInfo() {
+      // 東京の座標固定表示（座標のみ）
+      return `緯度経度：35.6895, 139.6917`;
+    }
+
+    async function runSequence() {
+      datetimeEl.textContent = `アクセス日時：${new Date().toLocaleString()}`;
+      const locText = await fetchLocationInfo();
+      await typeWriter(locationEl, locText, 60);
+      await typeWriter(textArea, message, 60);
+      await typeWriter(warningPopup, "\n" + warningText, 60);
+      warningPopup.classList.add('visible');
+      nextBtn.style.display = 'block';
+    }
+
+    nextBtn.onclick = () => {
+      window.location.href = 'nextpage.html';
+    };
+
+    runSequence();
+  </script>
+</body>
+</html>
